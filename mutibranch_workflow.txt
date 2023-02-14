@@ -1,0 +1,193 @@
+alter table tmktorder1
+add decDCQty decimal(18,3) default null after decQty; 
+
+alter table tmktorder1
+add decSCQty decimal(18,3) default null after decDCQty; 
+
+alter table tmktorder1
+add decRejQty decimal(18,3) default null after decSCQty; 
+
+alter table tmktorder1
+add decShortQty decimal(18,3) default null after decRejQty; 
+
+ CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vw_amendpoitems_mail` AS
+   
+   SELECT 
+        `p1`.`chrDocNo` AS `chrDocNo`,
+         DATE_FORMAT(`p1`.`dttDocDate`, '%d/%m/%Y') AS `dttDocDate`,
+        `p1`.`chrItemCode` AS `chrItemCode`,
+        `msto`.`chrDesc` AS `ItemDesc`,
+        `p1`.`decQty` AS `decQty`, 
+        `p1`.`decRate` AS `decRate`,
+        org.decQty as OrgQty,
+        org.decRate as OrgRate
+    FROM
+        tpurorder0 p0 
+        join `tpurorder1` `p1` on p0.chrDocCat=p1.chrDocCat and p0.chrDocNo=p1.chrDocNo and p0.bitAmend=0
+        JOIN `mstoitemmaster` `msto` ON `p1`.`chrItemCode` = `msto`.`chrItemCode`
+         join 
+        (
+			select 
+				p0.chrDocCat,
+                p0.chrDocNo,
+                p1.chrItemCode,
+                p1.decQty,
+                p1.decRate 
+            from tpurorder0 p0
+            join tpurorder1 p1 on p0.chrDocCat=p1.chrDocCat and p0.chrDocNo=p1.chrDocNo
+            and p0.bitAmend=1
+        ) as org on p0.chrRefcat2=org.chrDocCat and p0.chrRefNo2=org.chrDocNo and p1.chrItemCode=org.chrItemCode
+        
+			-- where `p1`.`chrDocNo`='PATH22230000011'
+        ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` trigger trg_update_dcqty_tmktsodespdet1_tmktorder1 after insert on tmktsodespdet1 FOR EACH ROW
+begin
+		declare  $OrdNo varchar(15);
+		declare  $OrdCat varchar(5);
+        declare  $bitSubmit bit default 0;
+        
+        select chrrefNo,chrRefCat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit from tmktsodespdet0 
+        
+        where chrDocNo=new.chrDocNo and chrDocCat=new.chrDocCat and bitSubmit=1;
+        
+        if $bitSubmit=1 then
+        
+			update tmktorder1 set decDCQty=ifnull(decDCQty,0) + new.decQty 
+            where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=new.chrItemCode;
+        
+        end if;
+		
+end//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE DEFINER=`root`@`localhost` trigger trg_delete_dcqty_tmktsodespdet1_tmktorder1 after delete on tmktsodespdet1 FOR EACH ROW
+begin
+		declare  $OrdNo varchar(15);
+		declare  $OrdCat varchar(5);
+		declare  $bitSubmit bit default 0;
+        
+        select chrrefNo,chrRefCat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit from tmktsodespdet0 
+        
+        where chrDocNo=OLD.chrDocNo and chrDocCat=OLD.chrDocCat and bitSubmit=1;
+        
+        if $bitSubmit=1 then
+        
+        update tmktorder1 set decDCQty=ifnull(decDCQty,0) - OLD.decQty 
+        
+        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=OLD.chrItemCode;
+        
+        end if;
+		
+end//
+
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` trigger trg_update_shortqty_tmktreceipt1_tmktorder1 after insert on tmktreceipt1 FOR EACH ROW
+begin
+		declare  $OrdNo varchar(15);
+		declare  $OrdCat varchar(5);
+		declare  $bitSubmit bit default 0;
+        
+        select 
+			chrRefNo1,chrRefcat1,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
+        from tmktreceipt0 
+        where chrDocNo=new.chrDocNo and chrDocCat=new.chrDocCat;
+        
+        if $bitSubmit=1 then
+        
+        update tmktorder1 set decShortQty	=ifnull(decShortQty,0) + ( new.decChlnQty - new.decRcvdQty ),
+							  decRejQty		=ifnull(decRejQty,0) + new.decRejQty
+        
+        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=new.chrItemCode;
+        
+        end if;
+		
+        
+end//
+
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` trigger trg_delete_shortqty_tmktreceipt1_tmktorder1 after delete on tmktreceipt1 FOR EACH ROW
+begin
+		declare  $OrdNo varchar(15);
+		declare  $OrdCat varchar(5);
+        declare  $bitSubmit bit default 0;
+        
+        select 
+			chrRefNo1,chrRefcat1,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
+        from tmktreceipt0 
+        where chrDocNo=OLD.chrDocNo and chrDocCat=OLD.chrDocCat;
+        
+       if $bitSubmit=1 then
+        
+        update tmktorder1 set decShortQty	=ifnull(decShortQty,0) - ( OLD.decChlnQty - OLD.decRcvdQty ),
+							  decRejQty		=ifnull(decRejQty,0) - OLD.decRejQty
+        
+        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=OLD.chrItemCode;
+        
+        end if;
+		
+        
+end//
+
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` trigger trg_update_scqty_tmktsoclose1_tmktorder1 after insert on tmktsoclose1 FOR EACH ROW
+begin
+		declare  $OrdNo varchar(15);
+		declare  $OrdCat varchar(5);
+        declare  $bitSubmit bit default 0;
+        
+        select 
+			chrRefNo,chrRefcat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
+        from tmktsoclose0 
+        where chrDocNo=new.chrDocNo and chrDocCat=new.chrDocCat and bitSubmit=1;
+        
+        if $bitSubmit=1 then
+        
+        update tmktorder1 set decSCQty	=ifnull(decSCQty,0) + new.decQty
+        
+        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=new.chrItemCode;
+        
+        end if;
+		
+end//
+
+DELIMITER ;
+
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` trigger trg_delete_scqty_tmktsoclose1_tmktorder1 after delete on tmktsoclose1 FOR EACH ROW
+begin
+		declare  $OrdNo varchar(15);
+		declare  $OrdCat varchar(5);
+        declare  $bitSubmit bit default 0;
+        
+        select 
+			chrRefNo,chrRefcat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
+        from tmktsoclose0 
+        where chrDocNo=OLD.chrDocNo and chrDocCat=OLD.chrDocCat and bitSubmit=1;
+        
+		if $bitSubmit=1 then
+        
+        update tmktorder1 set decSCQty	=ifnull(decSCQty,0) - OLD.decQty
+							  
+        
+        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=OLD.chrItemCode;
+        
+        end if;
+		
+end//
+
+DELIMITER ;
