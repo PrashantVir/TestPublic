@@ -1,193 +1,441 @@
-alter table tmktorder1
-add decDCQty decimal(18,3) default null after decQty; 
+CREATE TABLE `mktcustregtemp0` (
+  `chrID` char(10) NOT NULL,
+  chrDocCat varchar(5) NOT null,
+  `chrDocNo` char(15) NOT NULL,
+  dttDocDate date not null,
+  `chrName` varchar(60) NOT NULL,
+  `chrInvName` varchar(250) DEFAULT NULL,
+  `chrERPCustCode` varchar(20) DEFAULT NULL,
+  `chrSDesc` varchar(10) DEFAULT NULL,
+  `chrSE` varchar(5) DEFAULT NULL,
+  `chrAdd1` varchar(60) DEFAULT NULL,
+  `chrAdd2` varchar(60) DEFAULT NULL,
+  `chrAdd3` varchar(60) DEFAULT NULL,
+  `chrCity` varchar(5) DEFAULT NULL,
+  `chrState` varchar(5) DEFAULT NULL,
+  `chrCountry` varchar(5) DEFAULT NULL,
+  `chrPinNo` varchar(10) DEFAULT NULL,
+  `chrContact` varchar(60) DEFAULT NULL,
+  `intCrPeriod` int(11) NOT NULL DEFAULT '0',
+  `chrPhone1` varchar(15) DEFAULT NULL,
+  `chrPhone2` varchar(15) DEFAULT NULL,
+  `chrMobile` varchar(15) DEFAULT NULL,
+  `chrFax_No` varchar(15) DEFAULT NULL,
+  `chrEmail_ID` varchar(50) DEFAULT NULL,
+  `chrAddEMailId` varchar(250) DEFAULT NULL,
+  `chrWebSite` varchar(40) DEFAULT NULL,
+  `imgLogo` varchar(1000) DEFAULT NULL,
+  `ImgName` varchar(500) DEFAULT NULL,
+  `ImgSignature` varchar(1000) DEFAULT NULL,
+  `ImgSignName` varchar(500) DEFAULT NULL,
+  `chrPanNo` varchar(10) DEFAULT NULL,
+  `chrCinNo` varchar(21) DEFAULT NULL,
+  `chrGSTNo` varchar(15) DEFAULT NULL,
+  `bitSubmit` bit(1) NOT NULL DEFAULT b'0',
+  `bitNotInUse` varchar(1) DEFAULT NULL,
+  `bitGSTUnReg` bit(1) NOT NULL DEFAULT b'0',
+  `bitAgent` bit(1) DEFAULT b'0',
+  `bitCrhold` bit(1) DEFAULT b'0',
+  `chrCustNature` varchar(1) DEFAULT NULL,
+  `chrB2BC` varchar(1) DEFAULT NULL,
+  `chrsbslogin` varchar(112) DEFAULT NULL,
+  `chrZone` varchar(2) DEFAULT NULL,
+  `chrRKZNo` varchar(20) DEFAULT NULL,
+  `chrDivision` varchar(20) DEFAULT NULL,
+  `bitSend` bit(1) NOT NULL DEFAULT b'0',
+  `chrUserId` char(10) DEFAULT NULL,
+  `dttEntry` datetime NOT NULL,
+  `chrAuth` char(1) DEFAULT NULL,
+  `chrUpdID` char(10) DEFAULT NULL,
+  `dttUpdEntry` datetime DEFAULT NULL,
+  `chrUpdAuth` char(1) DEFAULT NULL,
+  `bitlock` bit(1) NOT NULL DEFAULT b'0',
+  `chrFreezeID` char(10) DEFAULT NULL,
+  `dttFreeze` datetime DEFAULT NULL,
+  `bitsys` bit(1) NOT NULL DEFAULT b'0',
+  `chrFinPeriod` varchar(15) DEFAULT NULL,
+  `chrLocnCD` char(5) NOT NULL,
+  `chrCompCD` char(5) NOT NULL,
+  `chrBRCode` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`chrDocCat`,chrDocNo)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-alter table tmktorder1
-add decSCQty decimal(18,3) default null after decDCQty; 
+CREATE TABLE `mktcustregtemp1` (
+  `chrID` char(10) NOT NULL,
+  chrDocCat varchar(5) NOT null,
+  `chrDocNo` char(15) NOT NULL,
+  dttDocDate date not null,
+ `chrItemCode` varchar(15) NOT NULL,
+  `chrCustItemDesc` varchar(150) NOT NULL,
+  `chrPartCode` varchar(20) DEFAULT NULL,
+  `chrUnit` varchar(5) DEFAULT NULL,
+  `chrHSNNo` varchar(8) DEFAULT NULL,
+  `bitLock` bit(1) NOT NULL DEFAULT b'0',
+  `chrUserID` char(10) DEFAULT NULL,
+  `dttEntry` datetime NOT NULL,
+  `chrUpdID` char(10) DEFAULT NULL,
+  `dttUpdEntry` datetime DEFAULT NULL,
+  `chrFreezeID` char(10) DEFAULT NULL,
+  `dttFreeze` datetime DEFAULT NULL,
+  `chrFinPeriod` char(15) NOT NULL,
+  `chrLocnCD` char(5) NOT NULL,
+  `chrCompCD` char(5) NOT NULL,
+  `chrBRCode` varchar(10) NOT NULL,
+  PRIMARY KEY (`chrDocCat`,chrDocNo,`chrItemCode`),
+  KEY `FK_mktcustregtemp01_chrDocCat_chrDocNo` (`chrDocCat`,chrDocNo),
+  KEY `FK_mktcustregtemp1_ItemCode_idx` (`chrItemCode`),
+  CONSTRAINT `FK_mktcustregtemp0_DocCat_DocNo` FOREIGN KEY (`chrDocCat`,chrDocNo) REFERENCES `mktcustregtemp0` (`chrDocCat`,chrDocNo),
+  CONSTRAINT `FK_mktcustregtemp1_ItemCode` FOREIGN KEY (`chrItemCode`) REFERENCES `mstoitemmaster` (`chrItemCode`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-alter table tmktorder1
-add decRejQty decimal(18,3) default null after decSCQty; 
+CREATE TABLE `mktcustregtemp2` (
+  `chrID` char(10) NOT NULL,
+   chrDocCat varchar(5) NOT null,
+  `chrDocNo` char(15) NOT NULL,
+   dttDocDate date not null,
+  `chrAdd1` varchar(60) DEFAULT NULL,
+  `chrAdd2` varchar(60) DEFAULT NULL,
+  `chrAdd3` varchar(60) DEFAULT NULL,
+  `chrCity` varchar(5) DEFAULT NULL,
+  `chrState` varchar(5) DEFAULT NULL,
+  `chrCountry` varchar(5) DEFAULT NULL,
+  `chrPinNo` varchar(10) DEFAULT NULL,
+  `chrContact` varchar(60) NOT NULL,
+  `chrPhone` varchar(15) DEFAULT NULL,
+  `chrMobile` varchar(15) NOT NULL,
+  `chrEmail_ID` varchar(50) DEFAULT NULL,
+  `chrPanNo` varchar(10) DEFAULT NULL,
+  `chrCinNo` varchar(21) DEFAULT NULL,
+  `chrGSTNo` varchar(15) DEFAULT NULL,
+  `chrUserId` char(10) DEFAULT NULL,
+  `dttEntry` datetime NOT NULL,
+  `chrAuth` char(1) DEFAULT NULL,
+  `chrUpdID` char(10) DEFAULT NULL,
+  `dttUpdEntry` datetime DEFAULT NULL,
+  `chrUpdAuth` char(1) DEFAULT NULL,
+  `bitLock` bit(1) NOT NULL DEFAULT b'0',
+  `chrFreezeID` char(10) DEFAULT NULL,
+  `dttFreeze` datetime DEFAULT NULL,
+  `bitSys` bit(1) NOT NULL DEFAULT b'0',
+  `chrFinPeriod` char(15) NOT NULL,
+  `chrLocnCD` char(5) NOT NULL,
+  `chrCompCD` char(5) NOT NULL,
+  `chrBRCode` varchar(10) NOT NULL,
+  KEY `FK_mktcustregtemp02_DocCat_DocNo` (`chrDocCat`,chrDocNo),
+  CONSTRAINT `FK_mktcustregtemp02_DocCat_DocNo` FOREIGN KEY (`chrDocCat`,chrDocNo) REFERENCES `mktcustregtemp0` (`chrDocCat`,chrDocNo)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-alter table tmktorder1
-add decShortQty decimal(18,3) default null after decRejQty; 
+CREATE TABLE `mktcustregtemp3` (
+  `chrID` char(10) NOT NULL,
+   chrDocCat varchar(5) NOT null,
+  `chrDocNo` char(15) NOT NULL,
+   dttDocDate date not null,
+   `chrUser_ID` varchar(50) DEFAULT NULL,
+  `chrCompCode` char(5) NOT NULL,
+  `chrLocCode` char(5) NOT NULL,
+  `chrUserId` char(10) DEFAULT NULL,
+  `dttEntry` datetime NOT NULL,
+  `chrAuth` char(1) DEFAULT NULL,
+  `chrUpdID` char(10) DEFAULT NULL,
+  `dttUpdEntry` datetime DEFAULT NULL,
+  `chrUpdAuth` char(1) DEFAULT NULL,
+  `bitLock` bit(1) NOT NULL DEFAULT b'0',															
+  `chrFreezeID` char(10) DEFAULT NULL,
+  `dttFreeze` datetime DEFAULT NULL,
+  `bitSys` bit(1) NOT NULL DEFAULT b'0',
+  `chrFinPeriod` char(15) NOT NULL,
+  `chrLocnCD` char(5) NOT NULL,
+  `chrCompCD` char(5) NOT NULL,
+  `chrBRCode` varchar(10) NOT NULL,
+  UNIQUE KEY `UN_chrusr_ID_Comp_Locn` (`chrUser_ID`,`chrCompCode`,`chrLocCode`),
+  KEY `FK_mktcustregtemp03_Doc_DocNo` (`chrDocCat`,chrDocNo),
+  CONSTRAINT `FK_mktcustregtemp03_Doc_DocNo` FOREIGN KEY (`chrDocCat`,chrDocNo) REFERENCES `mktcustregtemp0` (`chrDocCat`,chrDocNo)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
- CREATE 
+CREATE TABLE `mktcustregtemp4` (
+  `chrID` char(10) NOT NULL,
+   chrDocCat varchar(5) NOT null,
+  `chrDocNo` char(15) NOT NULL,
+   dttDocDate date not null,
+  `chrContact` varchar(60) DEFAULT NULL,
+  `chrDesignation` varchar(80) DEFAULT NULL,
+  `chrPhone1` varchar(15) DEFAULT NULL,
+  `chrPhone2` varchar(15) DEFAULT NULL,
+  `chrMobile` varchar(15) NOT NULL,
+  `chrMobile2` varchar(15) NOT NULL,
+  `chrEmail_ID` varchar(50) DEFAULT NULL,
+  `chrEmail_ID2` varchar(50) DEFAULT NULL,
+  `chrUserId` char(10) DEFAULT NULL,
+  `dttEntry` datetime NOT NULL,
+  `chrAuth` char(1) DEFAULT NULL,
+  `chrUpdID` char(10) DEFAULT NULL,
+  `dttUpdEntry` datetime DEFAULT NULL,
+  `chrUpdAuth` char(1) DEFAULT NULL,
+  `bitlock` bit(1) NOT NULL DEFAULT b'0',
+  `bitSubmit` bit(1) DEFAULT b'0',
+  `chrFreezeID` char(10) DEFAULT NULL,
+  `dttFreeze` datetime DEFAULT NULL,
+  `bitsys` bit(1) NOT NULL DEFAULT b'0',
+  `chrFinPeriod` varchar(15) DEFAULT NULL,
+  `chrLocnCD` char(5) NOT NULL,
+  `chrCompCD` char(5) NOT NULL,
+  `chrBRCode` varchar(10) NOT NULL,
+  UNIQUE KEY `chrEmail_ID_UNIQUE` (`chrEmail_ID`),
+  KEY `FK_mktcustregtemp04_DocCat_DocNo` (`chrDocCat`,chrDocNo),
+  CONSTRAINT `FK_mktcustregtemp04_DocCat_DocNo` FOREIGN KEY (`chrDocCat`,chrDocNo) REFERENCES `mktcustregtemp0` (`chrDocCat`,chrDocNo)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE 
      OR REPLACE ALGORITHM = UNDEFINED 
     DEFINER = `root`@`localhost` 
     SQL SECURITY DEFINER
-VIEW `vw_amendpoitems_mail` AS
-   
-   SELECT 
-        `p1`.`chrDocNo` AS `chrDocNo`,
-         DATE_FORMAT(`p1`.`dttDocDate`, '%d/%m/%Y') AS `dttDocDate`,
-        `p1`.`chrItemCode` AS `chrItemCode`,
-        `msto`.`chrDesc` AS `ItemDesc`,
-        `p1`.`decQty` AS `decQty`, 
-        `p1`.`decRate` AS `decRate`,
-        org.decQty as OrgQty,
-        org.decRate as OrgRate
+VIEW `vwcustinfotemp_listview` AS
+    SELECT 
+        `mktcustregtemp0`.`chrID` AS `chrID`,
+        `mktcustregtemp0`.`chrDocNo` AS `chrDocNo`,
+        `mktcustregtemp0`.`chrName` AS `chrName`,
+        `mktcustregtemp0`.`chrSDesc` AS `chrSDesc`,
+        `mktcustregtemp0`.`chrAdd1` AS `chrAdd1`,
+        `mktcustregtemp0`.`chrAdd2` AS `chrAdd2`,
+        `mktcustregtemp0`.`chrAdd3` AS `chrAdd3`,
+        `mktcustregtemp0`.`chrCity` AS `chrCity`, 
+        `mktcustregtemp0`.`chrState` AS `chrState`,
+        `mktcustregtemp0`.`chrCountry` AS `chrCountry`,
+        `mktcustregtemp0`.`chrPinNo` AS `chrPinNo`,
+        `mktcustregtemp0`.`chrContact` AS `chrContact`,
+        `mktcustregtemp0`.`chrPhone1` AS `chrPhone1`,
+        `mktcustregtemp0`.`chrPhone2` AS `chrPhone2`,
+        `mktcustregtemp0`.`chrMobile` AS `chrMobile`,
+        `mktcustregtemp0`.`chrFax_No` AS `chrFax_No`,
+        `mktcustregtemp0`.`chrEmail_ID` AS `chrEmail_ID`,
+        `mktcustregtemp0`.`chrWebSite` AS `chrWebSite`,
+        `mktcustregtemp0`.`chrPanNo` AS `chrPanNo`,
+        `mktcustregtemp0`.`chrCinNo` AS `chrCinNo`,
+        `mktcustregtemp0`.`chrGSTNo` AS `chrGSTNo`,
+        CAST(`mktcustregtemp0`.`bitSubmit` AS UNSIGNED) AS `bitSubmit`,
+        CAST(`mktcustregtemp0`.`bitCrhold` AS UNSIGNED) AS `bitCrhold`,
+        `mktcustregtemp0`.`bitNotInUse` AS `bitNotInUse`,
+        CAST(`mktcustregtemp0`.`bitGSTUnReg` AS UNSIGNED) AS `bitGSTUnReg`,
+        `mktcustregtemp0`.`chrUserId` AS `chrUserID`,
+        `mktcustregtemp0`.`dttEntry` AS `dttEntry`,
+        `mktcustregtemp0`.`chrUpdID` AS `chrUpdID`,
+        `mktcustregtemp0`.`dttUpdEntry` AS `dttUpdEntry`,
+        `mktcustregtemp0`.`bitlock` AS `bitLock`,
+        `mktcustregtemp0`.`chrFreezeID` AS `chrFreezeID`,
+        `mktcustregtemp0`.`dttFreeze` AS `dttFreeze`,
+        `mktcustregtemp0`.`bitsys` AS `bitSys`,
+        `mktcustregtemp0`.`chrFinPeriod` AS `chrFinPeriod`,
+        `mktcustregtemp0`.`chrLocnCD` AS `chrLocnCD`,
+        `mktcustregtemp0`.`chrCompCD` AS `chrCompCD`,
+        `mktcustregtemp0`.`chrCustNature` AS `chrCustNature`,
+        (CASE
+            WHEN (`mktcustregtemp0`.`chrCustNature` = 'L') THEN 'Domestic'
+            WHEN (`mktcustregtemp0`.`chrCustNature` = 'E') THEN 'Export'
+            WHEN (`mktcustregtemp0`.`chrCustNature` = 'D') THEN 'Deemed Export'
+            ELSE ''
+        END) AS `chrCustNaturedesc`,
+        `mktcustregtemp0`.`chrB2BC` AS `chrB2BC`,
+        (CASE
+            WHEN (`mktcustregtemp0`.`chrB2BC` = 'B') THEN 'B2B'
+            WHEN (`mktcustregtemp0`.`chrB2BC` = 'C') THEN 'B2C'
+            ELSE ''
+        END) AS `chrB2BCdesc`,
+        CAST(`mktcustregtemp0`.`bitAgent` AS UNSIGNED) AS `bitAgent`,
+        (CASE
+            WHEN (CAST(`mktcustregtemp0`.`bitAgent` AS UNSIGNED) = 1) THEN 'Agent'
+            WHEN (CAST(`mktcustregtemp0`.`bitAgent` AS UNSIGNED) = 0) THEN 'Customer'
+        END) AS `bitAgentCustDesc`,
+        `mktcustregtemp0`.`chrsbslogin` AS `chrsbslogin`,
+        `mktcustregtemp0`.`chrBRCode` AS `chrBRCode`
     FROM
-        tpurorder0 p0 
-        join `tpurorder1` `p1` on p0.chrDocCat=p1.chrDocCat and p0.chrDocNo=p1.chrDocNo and p0.bitAmend=0
-        JOIN `mstoitemmaster` `msto` ON `p1`.`chrItemCode` = `msto`.`chrItemCode`
-         join 
-        (
-			select 
-				p0.chrDocCat,
-                p0.chrDocNo,
-                p1.chrItemCode,
-                p1.decQty,
-                p1.decRate 
-            from tpurorder0 p0
-            join tpurorder1 p1 on p0.chrDocCat=p1.chrDocCat and p0.chrDocNo=p1.chrDocNo
-            and p0.bitAmend=1
-        ) as org on p0.chrRefcat2=org.chrDocCat and p0.chrRefNo2=org.chrDocNo and p1.chrItemCode=org.chrItemCode
-        
-			-- where `p1`.`chrDocNo`='PATH22230000011'
-        ;
+        `mktcustregtemp0`
+    WHERE
+        (`mktcustregtemp0`.`bitNotInUse` = 0);
 
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` trigger trg_update_dcqty_tmktsodespdet1_tmktorder1 after insert on tmktsodespdet1 FOR EACH ROW
-begin
-		declare  $OrdNo varchar(15);
-		declare  $OrdCat varchar(5);
-        declare  $bitSubmit bit default 0;
-        
-        select chrrefNo,chrRefCat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit from tmktsodespdet0 
-        
-        where chrDocNo=new.chrDocNo and chrDocCat=new.chrDocCat and bitSubmit=1;
-        
-        if $bitSubmit=1 then
-        
-			update tmktorder1 set decDCQty=ifnull(decDCQty,0) + new.decQty 
-            where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=new.chrItemCode;
-        
-        end if;
-		
-end//
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vwgetcustregtemp0` AS
+    SELECT 
+        `reg0`.`chrName` AS `chrName`,
+        `reg0`.`chrZone` AS `chrZone`,
+        `reg0`.`chrContact` AS `chrContact`,
+        `reg0`.`chrAdd1` AS `chrAdd1`,
+        `reg0`.`chrPhone1` AS `chrPhone1`, 
+        `reg0`.`chrAdd2` AS `chrAdd2`,
+        `reg0`.`chrSE` AS `chrSE`,
+        `reg0`.`chrMobile` AS `chrMobile`,
+        `reg0`.`chrAdd3` AS `chrAdd3`,
+        `reg0`.`chrEmail_ID` AS `chrEmail_ID`,
+        `reg0`.`chrCity` AS `chrCity`,
+        `reg0`.`chrState` AS `chrState`,
+        `reg0`.`chrCountry` AS `chrCountry`,
+        `reg0`.`chrPanNo` AS `chrPanNo`,
+        `reg0`.`chrGSTNo` AS `chrGSTNo`,
+        `reg0`.`chrPinNo` AS `chrPinNo`,
+        `reg0`.`chrCinNo` AS `chrCinNo`,
+        CAST(`reg0`.`bitNotInUse` AS UNSIGNED) AS `BitNotInUse`,
+        CAST(`reg0`.`bitCrhold` AS UNSIGNED) AS `bitCrhold`,
+        `reg0`.`chrFax_No` AS `chrFax_No`,
+        `reg0`.`chrWebSite` AS `chrWebSite`,
+        `reg0`.`chrPhone2` AS `chrPhone2`,
+        CAST(`reg0`.`bitAgent` AS UNSIGNED) AS `BitAgent`,
+        `reg0`.`chrCustNature` AS `chrCustNature`,
+        `reg0`.`chrB2BC` AS `chrB2BC`,
+        `se`.`chrName` AS `SEDesc`,
+        `reg0`.`chrDocNo` AS `chrDocNo`,
+         date_format(reg0.dttDocDate,'%d/%m%Y') as dttDocDate,
+        `reg0`.`chrAddEMailId` AS `chrAddEMailId`,
+        `reg0`.`ImgName` AS `ImgName`,
+        `reg0`.`imgLogo` AS `imgLogo`,
+        `reg0`.`ImgSignName` AS `ImgSignName`,
+        `reg0`.`ImgSignature` AS `ImgSignature`,
+        `reg0`.`chrsbslogin` AS `chrsbslogin`,
+        IFNULL(`reg0`.`chrRKZNo`, '') AS `chrRKZNo`,
+        IFNULL(`reg0`.`chrDivision`, '') AS `chrDivision`,
+        IFNULL(`reg0`.`chrERPCustCode`, '') AS `chrERPCustCode`,
+        `reg0`.`chrInvName` AS `chrInvName`
+    FROM
+        (`mktcustregtemp0` `reg0`
+        LEFT JOIN `mmktse` `se` ON ((`reg0`.`chrSE` = `se`.`chrCode`)));
 
-DELIMITER ;
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vwgetcustregtemp1` AS
+    SELECT 
+        `reg1`.`chrDocNo` AS `chrDocNo`,
+        `reg1`.`chrItemCode` AS `chrItemCode`,
+        `msto`.`chrDesc` AS `ItemDesc`,
+        `reg1`.`chrUnit` AS `chrUnit`,
+        `unit`.`chrDesc` AS `UnitDesc`, 
+        `reg1`.`chrPartCode` AS `chrPartCode`,
+        `reg1`.`chrCustItemDesc` AS `chrCustItemDesc`,
+        `reg1`.`chrHSNNo` AS `chrHSNNo`
+    FROM
+        (((`mktcustregtemp1` `reg1`
+        JOIN `mktcustregtemp0` `reg0` ON ((`reg1`.`chrDocNo` = `reg0`.`chrDocNo`)))
+        JOIN `mstoitemmaster` `msto` ON ((`reg1`.`chrItemCode` = `msto`.`chrItemCode`)))
+        JOIN `mstounit0` `unit` ON ((`reg1`.`chrUnit` = `unit`.`chrCode`)));
 
-DELIMITER //
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vwgetcustregtemp0` AS
+    SELECT 
+        `reg0`.`chrName` AS `chrName`,
+        `reg0`.`chrZone` AS `chrZone`,
+        `reg0`.`chrContact` AS `chrContact`,
+        `reg0`.`chrAdd1` AS `chrAdd1`,
+        `reg0`.`chrPhone1` AS `chrPhone1`,
+        `reg0`.`chrAdd2` AS `chrAdd2`,
+        `reg0`.`chrSE` AS `chrSE`, 
+        `reg0`.`chrMobile` AS `chrMobile`,
+        `reg0`.`chrAdd3` AS `chrAdd3`,
+        `reg0`.`chrEmail_ID` AS `chrEmail_ID`,
+        `reg0`.`chrCity` AS `chrCity`,
+        `reg0`.`chrState` AS `chrState`,
+        `reg0`.`chrCountry` AS `chrCountry`,
+        `reg0`.`chrPanNo` AS `chrPanNo`,
+        `reg0`.`chrGSTNo` AS `chrGSTNo`,
+        `reg0`.`chrPinNo` AS `chrPinNo`,
+        `reg0`.`chrCinNo` AS `chrCinNo`,
+        CAST(`reg0`.`bitNotInUse` AS UNSIGNED) AS `BitNotInUse`,
+        CAST(`reg0`.`bitCrhold` AS UNSIGNED) AS `bitCrhold`,
+        `reg0`.`chrFax_No` AS `chrFax_No`,
+        `reg0`.`chrWebSite` AS `chrWebSite`,
+        `reg0`.`chrPhone2` AS `chrPhone2`,
+        CAST(`reg0`.`bitAgent` AS UNSIGNED) AS `BitAgent`,
+        `reg0`.`chrCustNature` AS `chrCustNature`,
+        `reg0`.`chrB2BC` AS `chrB2BC`,
+        `se`.`chrName` AS `SEDesc`,
+        `reg0`.`chrDocNo` AS `chrDocNo`,
+        DATE_FORMAT(`reg0`.`dttDocDate`, '%d/%m%Y') AS `dttDocDate`,
+        `reg0`.`chrAddEMailId` AS `chrAddEMailId`,
+        `reg0`.`ImgName` AS `ImgName`,
+        `reg0`.`imgLogo` AS `imgLogo`,
+        `reg0`.`ImgSignName` AS `ImgSignName`,
+        `reg0`.`ImgSignature` AS `ImgSignature`,
+        `reg0`.`chrsbslogin` AS `chrsbslogin`,
+        IFNULL(`reg0`.`chrRKZNo`, '') AS `chrRKZNo`,
+        IFNULL(`reg0`.`chrDivision`, '') AS `chrDivision`,
+        IFNULL(`reg0`.`chrERPCustCode`, '') AS `chrERPCustCode`,
+        `reg0`.`chrUserId` AS `chrUserID`,
+        `reg0`.`chrInvName` AS `chrInvName`
+    FROM
+        (`mktcustregtemp0` `reg0`
+        LEFT JOIN `mmktse` `se` ON ((`reg0`.`chrSE` = `se`.`chrCode`)));
 
-CREATE DEFINER=`root`@`localhost` trigger trg_delete_dcqty_tmktsodespdet1_tmktorder1 after delete on tmktsodespdet1 FOR EACH ROW
-begin
-		declare  $OrdNo varchar(15);
-		declare  $OrdCat varchar(5);
-		declare  $bitSubmit bit default 0;
-        
-        select chrrefNo,chrRefCat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit from tmktsodespdet0 
-        
-        where chrDocNo=OLD.chrDocNo and chrDocCat=OLD.chrDocCat and bitSubmit=1;
-        
-        if $bitSubmit=1 then
-        
-        update tmktorder1 set decDCQty=ifnull(decDCQty,0) - OLD.decQty 
-        
-        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=OLD.chrItemCode;
-        
-        end if;
-		
-end//
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vwgetcustregtemp0` AS
+    SELECT 
+        `reg0`.`chrName` AS `chrName`,
+        `reg0`.`chrZone` AS `chrZone`,
+        `reg0`.`chrContact` AS `chrContact`,
+        `reg0`.`chrAdd1` AS `chrAdd1`,
+        `reg0`.`chrPhone1` AS `chrPhone1`,
+        `reg0`.`chrAdd2` AS `chrAdd2`,
+        `reg0`.`chrSE` AS `chrSE`, 
+        `reg0`.`chrMobile` AS `chrMobile`,
+        `reg0`.`chrAdd3` AS `chrAdd3`,
+        `reg0`.`chrEmail_ID` AS `chrEmail_ID`,
+        `reg0`.`chrCity` AS `chrCity`,
+        `reg0`.`chrState` AS `chrState`,
+        `reg0`.`chrCountry` AS `chrCountry`,
+        `reg0`.`chrPanNo` AS `chrPanNo`,
+        `reg0`.`chrGSTNo` AS `chrGSTNo`,
+        `reg0`.`chrPinNo` AS `chrPinNo`,
+        `reg0`.`chrCinNo` AS `chrCinNo`,
+        CAST(`reg0`.`bitNotInUse` AS UNSIGNED) AS `BitNotInUse`,
+        CAST(`reg0`.`bitCrhold` AS UNSIGNED) AS `bitCrhold`,
+        `reg0`.`chrFax_No` AS `chrFax_No`,
+        `reg0`.`chrWebSite` AS `chrWebSite`,
+        `reg0`.`chrPhone2` AS `chrPhone2`,
+        CAST(`reg0`.`bitAgent` AS UNSIGNED) AS `BitAgent`,
+        `reg0`.`chrCustNature` AS `chrCustNature`,
+        `reg0`.`chrB2BC` AS `chrB2BC`,
+        `se`.`chrName` AS `SEDesc`,
+        `reg0`.`chrDocNo` AS `chrDocNo`,
+        DATE_FORMAT(`reg0`.`dttDocDate`, '%d/%m%Y') AS `dttDocDate`,
+        `reg0`.`chrAddEMailId` AS `chrAddEMailId`,
+        `reg0`.`ImgName` AS `ImgName`,
+        `reg0`.`imgLogo` AS `imgLogo`,
+        `reg0`.`ImgSignName` AS `ImgSignName`,
+        `reg0`.`ImgSignature` AS `ImgSignature`,
+        `reg0`.`chrsbslogin` AS `chrsbslogin`,
+        IFNULL(`reg0`.`chrRKZNo`, '') AS `chrRKZNo`,
+        IFNULL(`reg0`.`chrDivision`, '') AS `chrDivision`,
+        IFNULL(`reg0`.`chrERPCustCode`, '') AS `chrERPCustCode`,
+        `reg0`.`chrUserId` AS `chrUserID`,
+        `reg0`.`chrInvName` AS `chrInvName`
+    FROM
+        (`mktcustregtemp0` `reg0`
+        LEFT JOIN `mmktse` `se` ON ((`reg0`.`chrSE` = `se`.`chrCode`)));
 
-DELIMITER ;
-
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` trigger trg_update_shortqty_tmktreceipt1_tmktorder1 after insert on tmktreceipt1 FOR EACH ROW
-begin
-		declare  $OrdNo varchar(15);
-		declare  $OrdCat varchar(5);
-		declare  $bitSubmit bit default 0;
+CREATE OR REPLACE
+    ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vwgetcustregtemp1` AS
+    SELECT 
+        `reg1`.`chrDocNo` AS `chrDocNo`,
+        `reg1`.`chrItemCode` AS `chrItemCode`,
+        `msto`.`chrDesc` AS `ItemDesc`,
+        `reg1`.`chrUnit` AS `chrUnit`,
+        `unit`.`chrDesc` AS `UnitDesc`,
+        `reg1`.`chrPartCode` AS `chrPartCode`,
+        `reg1`.`chrCustItemDesc` AS `chrCustItemDesc`, 
+        `reg1`.`chrHSNNo` AS `chrHSNNo`
+    FROM
+        (((`mktcustregtemp1` `reg1`
+        JOIN `mktcustregtemp0` `reg0` ON ((`reg1`.`chrDocNo` = `reg0`.`chrDocNo`)))
+        JOIN `mstoitemmaster` `msto` ON ((`reg1`.`chrItemCode` = `msto`.`chrItemCode`)))
+        JOIN `mstounit0` `unit` ON ((`reg1`.`chrUnit` = `unit`.`chrCode`)))
         
-        select 
-			chrRefNo1,chrRefcat1,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
-        from tmktreceipt0 
-        where chrDocNo=new.chrDocNo and chrDocCat=new.chrDocCat;
-        
-        if $bitSubmit=1 then
-        
-        update tmktorder1 set decShortQty	=ifnull(decShortQty,0) + ( new.decChlnQty - new.decRcvdQty ),
-							  decRejQty		=ifnull(decRejQty,0) + new.decRejQty
-        
-        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=new.chrItemCode;
-        
-        end if;
-		
-        
-end//
-
-DELIMITER ;
-
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` trigger trg_delete_shortqty_tmktreceipt1_tmktorder1 after delete on tmktreceipt1 FOR EACH ROW
-begin
-		declare  $OrdNo varchar(15);
-		declare  $OrdCat varchar(5);
-        declare  $bitSubmit bit default 0;
-        
-        select 
-			chrRefNo1,chrRefcat1,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
-        from tmktreceipt0 
-        where chrDocNo=OLD.chrDocNo and chrDocCat=OLD.chrDocCat;
-        
-       if $bitSubmit=1 then
-        
-        update tmktorder1 set decShortQty	=ifnull(decShortQty,0) - ( OLD.decChlnQty - OLD.decRcvdQty ),
-							  decRejQty		=ifnull(decRejQty,0) - OLD.decRejQty
-        
-        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=OLD.chrItemCode;
-        
-        end if;
-		
-        
-end//
-
-DELIMITER ;
-
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` trigger trg_update_scqty_tmktsoclose1_tmktorder1 after insert on tmktsoclose1 FOR EACH ROW
-begin
-		declare  $OrdNo varchar(15);
-		declare  $OrdCat varchar(5);
-        declare  $bitSubmit bit default 0;
-        
-        select 
-			chrRefNo,chrRefcat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
-        from tmktsoclose0 
-        where chrDocNo=new.chrDocNo and chrDocCat=new.chrDocCat and bitSubmit=1;
-        
-        if $bitSubmit=1 then
-        
-        update tmktorder1 set decSCQty	=ifnull(decSCQty,0) + new.decQty
-        
-        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=new.chrItemCode;
-        
-        end if;
-		
-end//
-
-DELIMITER ;
-
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` trigger trg_delete_scqty_tmktsoclose1_tmktorder1 after delete on tmktsoclose1 FOR EACH ROW
-begin
-		declare  $OrdNo varchar(15);
-		declare  $OrdCat varchar(5);
-        declare  $bitSubmit bit default 0;
-        
-        select 
-			chrRefNo,chrRefcat,bitSubmit into $OrdNo,$OrdCat,$bitSubmit 
-        from tmktsoclose0 
-        where chrDocNo=OLD.chrDocNo and chrDocCat=OLD.chrDocCat and bitSubmit=1;
-        
-		if $bitSubmit=1 then
-        
-        update tmktorder1 set decSCQty	=ifnull(decSCQty,0) - OLD.decQty
-							  
-        
-        where chrDocCat=$OrdCat and chrDocNo=$OrdNo and chrItemCode=OLD.chrItemCode;
-        
-        end if;
-		
-end//
-
-DELIMITER ;
+        order by reg1.chrID ;
