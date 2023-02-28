@@ -1,0 +1,151 @@
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vwmktrateamendcviewlist` AS
+    SELECT 
+        `mktrate0`.`chrID` AS `chrID`,
+        `mktrate0`.`chrDocCat` AS `chrDocCat`,
+        `mktrate0`.`chrDocNo` AS `chrDocNo`,
+        DATE_FORMAT(`mktrate0`.`dttDocDate`, '%d/%m/%Y') AS `dttDocDate`,
+        DATE_FORMAT(`mktrate0`.`dttFrmDate`, '%d/%m/%Y') AS `dttFrmDate`,
+        DATE_FORMAT(`mktrate0`.`dttToDate`, '%d/%m/%Y') AS `dttToDate`,
+        `mktrate0`.`chrRemarks` AS `chrRemarks`,
+        IFNULL(`mktrate0`.`chrRefcat`, '') AS `chrRefcat`,
+        IFNULL(`mktrate0`.`chrRefNo`, '') AS `chrRefNo`,
+        IFNULL(`mktrate0`.`dttrefDate`, '') AS `dttrefDate`,
+        IFNULL(`mktrate0`.`chrRefCat1`, '') AS `chrRefcat1`,
+        IFNULL(`mktrate0`.`chrRefNo1`, '') AS `chrRefNo1`,
+        IFNULL(`mktrate0`.`dttrefDate1`, '') AS `dttrefDate1`,
+        IFNULL(`mktrate0`.`chrRefCat2`, '') AS `chrRefCat2`,
+        IFNULL(`mktrate0`.`chrRefNo2`, '') AS `chrRefNo2`,
+        IFNULL(`mktrate0`.`dttrefDate2`, '') AS `dttrefDate2`,
+        `mktrate0`.`intCounter` AS `intCounter`,
+        `mktrate0`.`bitClosed` AS `bitClosed`,
+        `mktrate0`.`bitSubmit` AS `bitSubmit`,
+        `mktrate0`.`chrUserId` AS `chrUserId`,
+        `mktrate0`.`dttEntry` AS `dttEntry`,
+        `mktrate0`.`chrAuth` AS `chrAuth`,
+        `mktrate0`.`chrUpdID` AS `chrUpdID`,
+        `mktrate0`.`dttUpdEntry` AS `dttUpdEntry`,
+        `mktrate0`.`chrUpdAuth` AS `chrUpdAuth`,
+        `mktrate0`.`chrFreezeID` AS `chrFreezeID`,
+        `mktrate0`.`dttFreeze` AS `dttFreeze`,
+        `mktrate0`.`chrFinPeriod` AS `chrFinPeriod`,
+        `mktrate0`.`chrLocnCD` AS `chrLocnCD`,
+        `mktrate0`.`chrCompCD` AS `chrCompCD`,
+        `mktrate0`.`chrPartyCode` AS `chrPartyCode`,
+        `vend`.`chrName` AS `VendName`,
+        CAST(`mktrate0`.`bitsys` AS UNSIGNED) AS `bitSys1`,
+        CAST(`mktrate0`.`bitSubmit` AS UNSIGNED) AS `bitSubmit1`,
+        CAST(`mktrate0`.`bitApproved` AS UNSIGNED) AS `bitApproved`,
+        CAST(`mktrate0`.`bitAmend` AS UNSIGNED) AS `bitAmend`,
+        CAST(`mktrate0`.`bitlock` AS UNSIGNED) AS `bitlock`,
+        `mktrate0`.`intRevisionCnt` AS `intRevisionCnt`, 
+        IFNULL(`mktrate0`.`chrCustomerCust`, '') AS `chrCustomerCust`,
+        IFNULL(`custcust`.`chrName`, '') AS `CustomerCust`,
+        `mktrate0`.`chrBRCode` AS `chrBRCode`
+    FROM
+        ((`tmktcustcont0` `mktrate0`
+        JOIN `vwcustinfo` `vend` ON ((`mktrate0`.`chrPartyCode` = `vend`.`chrCode`)))
+        LEFT JOIN `mktcustcust0` `custcust` ON ((`mktrate0`.`chrCustomerCust` = `custcust`.`chrCode`)))
+    WHERE
+        (`mktrate0`.`chrDocCat` = 'SRCA');
+
+drop procedure if exists SP_PartSORCSelct;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PartSORCSelct`($BRCode varchar(10),$LocnCD varchar(5),$CompCD varchar(5))
+select PQ0.chrPartyCode,Cust.chrName as Customer,PQ0.chrDocCat,PQ0.chrDocNo,
+date_format(PQ0.dttDocDate,'%d/%m/%Y') as dttDocDate,
+	PQ0.chrRefNo as PENo,
+	case when PQ0.chrRefNo!='' then date_format(PQ0.dttRefDate,'%d/%m/%Y')  else '' end as PEDate,
+    ifnull(PQ0.chrRefCat1,PQ0.chrDocCat) as OrgRCCat,
+ifnull(PQ0.chrRefNo1,PQ0.chrDocNo) as OrgRCNo,
+ifnull(date_format(PQ0.dttrefDate1,'%d/%m/%Y'),date_format(PQ0.dttDocDate,'%d/%m/%Y')) as OrgRCDate,
+	sum(PQ1.decqty) as PQQty,
+    0 as POQty,
+    cast(Cust.bitCrhold as unsigned integer) as bitCrhold
+	from tmktcustcont0 PQ0 
+	join tmktcustcont1 PQ1 on
+	PQ0.chrDOcCat=PQ1.chrDOcCat and PQ0.chrDOcNO=PQ1.chrDOcNO
+    join mmktcustreg0 Cust on PQ0.chrPartyCode=Cust.chrCode
+     where PQ0.bitsubmit=1 and PQ0.bitlock=1 and PQ0.bitApproved=1 and PQ0.bitAmend=0 and PQ0.chrBRCode=$BRCode and 
+     PQ0.chrLocnCD=$LocnCD and PQ0.chrCompCD=$CompCD and 
+     PQ0.dttFrmDate <= curdate() AND PQ0.dttToDate >= curdate()
+	group by PQ0.chrPartyCode,Cust.chrName,PQ0.chrDocCat,PQ0.chrDocNo,PQ0.dttDocDate,PQ0.chrRefNo,
+	PQ0.chrRefNo,PQ0.dttRefDate,Cust.bitCrhold
+	
+    order by PQ0.dttEntry desc;
+
+drop procedure if exists SP_PartSORCCustSelct;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_PartSORCCustSelct`(CustCode varchar(10),BRCode varchar(10),LocnCD VARCHAR(5),CompCD VARCHAR(5))
+select PQ0.chrPartyCode,Cust.chrName as Customer,PQ0.chrDocCat,PQ0.chrDocNo,
+date_format(PQ0.dttDocDate,'%d/%m/%Y') as dttDocDate,
+	PQ0.chrRefNo as PENo,
+	case when PQ0.chrRefNo!='' then date_format(PQ0.dttRefDate,'%d/%m/%Y')  else '' end as PEDate,
+    ifnull(PQ0.chrRefCat1,PQ0.chrDocCat) as OrgRCCat,
+ifnull(PQ0.chrRefNo1,PQ0.chrDocNo) as OrgRCNo,
+ifnull(date_format(PQ0.dttrefDate1,'%d/%m/%Y'),date_format(PQ0.dttDocDate,'%d/%m/%Y')) as OrgRCDate,
+	sum(PQ1.decqty) as PQQty,
+    0 as POQty ,
+    cast(Cust.bitCrhold as unsigned integer) as bitCrhold
+	from tmktcustcont0 PQ0 
+	join tmktcustcont1 PQ1 on 
+	PQ0.chrDOcCat=PQ1.chrDOcCat and PQ0.chrDOcNO=PQ1.chrDOcNO
+     join mmktcustreg0 Cust on PQ0.chrPartyCode=Cust.chrCode
+     where PQ0.chrPartyCode=CustCode and PQ0.bitlock=1 and PQ0.bitsubmit=1 and PQ0.bitApproved=1 and PQ0.bitAmend=0 and PQ0.chrBRCode=BRCode and
+     PQ0.chrLocnCD=LocnCD and PQ0.chrCompCD=CompCD and
+     PQ0.dttFrmDate <= curdate() AND PQ0.dttToDate >= curdate()
+	group by PQ0.chrPartyCode,Cust.chrName,PQ0.chrDocCat,PQ0.chrDocNo,PQ0.dttDocDate,PQ0.chrRefNo,
+	PQ0.chrRefNo,PQ0.dttRefDate,Cust.bitCrhold
+	
+    order by PQ0.chrDocNo desc;
+
+CREATE 
+     OR REPLACE ALGORITHM = UNDEFINED 
+    DEFINER = `root`@`localhost` 
+    SQL SECURITY DEFINER
+VIEW `vwmktrcamendlist` AS
+    SELECT 
+        `v0`.`chrDocCat` AS `chrDocCat`,
+        `v0`.`chrDocNo` AS `chrDocNo`,
+        `v0`.`chrRefNo` AS `chrRefNo`,
+        `v0`.`chrRefcat` AS `chrRefCat`,
+        IFNULL(`v0`.`chrRefNo1`, `v0`.`chrDocNo`) AS `chrRefNo1`,
+        IFNULL(`v0`.`chrRefCat1`, `v0`.`chrDocCat`) AS `chrRefCat1`,
+        DATE_FORMAT(IFNULL(`v0`.`dttrefDate1`, `v0`.`dttDocDate`),
+                '%d/%m/%Y') AS `dttrefDate1`,
+        DATE_FORMAT(`v0`.`dttrefDate`, '%d/%m/%Y') AS `dttRefDate`,
+        DATE_FORMAT(`v0`.`dttDocDate`, '%d/%m/%Y') AS `dttDocDate`, 
+        DATE_FORMAT(`v0`.`dttFrmDate`, '%d/%m/%Y') AS `dttFrmDate`,
+        DATE_FORMAT(`v0`.`dttToDate`, '%d/%m/%Y') AS `dttToDate`,
+        CAST(`v0`.`bitsys` AS UNSIGNED) AS `bitsys`,
+        CAST(`v0`.`bitSubmit` AS UNSIGNED) AS `bitSubmit`,
+        CAST(`v0`.`bitApproved` AS UNSIGNED) AS `bitApproved`,
+        CAST(`v0`.`bitAmend` AS UNSIGNED) AS `bitAmend`,
+        `reg`.`chrName` AS `Customer`,
+        `reg`.`chrCode` AS `CustCode`,
+        IFNULL(`rc`.`Cnt`, 0) AS `RevisionCnt`,
+        `v0`.`chrBRCode` AS `chrBRCode`,
+        `v0`.`chrLocnCD` AS `chrLocnCD`,
+        `v0`.`chrCompCD` AS `chrCompCD`
+    FROM
+        ((`tmktcustcont0` `v0`
+        JOIN `mmktcustreg0` `reg` ON ((`v0`.`chrPartyCode` = `reg`.`chrCode`)))
+        LEFT JOIN (SELECT 
+            COUNT(0) AS `Cnt`,
+                IFNULL(`tmktcustcont0`.`chrRefNo1`, `tmktcustcont0`.`chrDocNo`) AS `DocNo`,
+                IFNULL(`tmktcustcont0`.`chrRefCat1`, `tmktcustcont0`.`chrDocCat`) AS `DocCat`
+        FROM
+            `tmktcustcont0`
+        WHERE
+            (`tmktcustcont0`.`chrRefNo1` IS NOT NULL)
+        GROUP BY `DocNo` , `DocCat`) `rc` ON (((IFNULL(`v0`.`chrRefNo1`, `v0`.`chrDocNo`) = `rc`.`DocNo`)
+            AND (IFNULL(`v0`.`chrRefCat1`, `v0`.`chrDocCat`) = `rc`.`DocCat`))))
+    WHERE
+        ((`v0`.`dttToDate` >= CURDATE())
+            AND (`v0`.`bitAmend` = 0)
+            AND (`v0`.`bitSubmit` = 1)
+            AND (`v0`.`bitsys` = 0)
+             AND (`v0`.`bitlock` = 1)
+            )
+    ORDER BY `v0`.`dttDocDate` DESC;
