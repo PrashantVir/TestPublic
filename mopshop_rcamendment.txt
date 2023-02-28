@@ -1,4 +1,4 @@
-
+-- mopshop rc amendment script file
 CREATE 
      OR REPLACE ALGORITHM = UNDEFINED 
     DEFINER = `root`@`localhost` 
